@@ -6,18 +6,26 @@
 
 const UserInfo = GetTogglUserInfo()
 const TogglToken = UserInfo.Token + ":api_token" 
-const TogglAuth = Data.fromString(TogglToken).toBase64String();
+let TogglAuth 
+try{
+  TogglAuth = Data.fromString(TogglToken).toBase64String();
+}
+catch
+{
+  TogglAuth = Buffer.from(TogglToken).toString('base64')
+}
 const TogglURL = "https://api.track.toggl.com/api/v8/";
 const ReportURL = "https://api.track.toggl.com/reports/api/v2/"
 
 const  request = async (method,type,id,headers = {},body=null) =>
 {
-    if (id == "") {
-        url = TogglURL + type;
-    }    
-    else {
-        url = TogglURL + type + "/" + id;
-    }
+  
+  if (id == "") {
+      url = TogglURL + type;
+  }    
+  else {
+      url = TogglURL + type + "/" + id;
+  }
   let TogglRequest = new Request(url);
   TogglRequest.method = method;
   headers["Authorization"] = "Basic "+TogglAuth;
@@ -107,7 +115,15 @@ module.exports.GetProjects = GetProjects
 module.exports.SearchTimeEntries = SearchTimeEntries
 
 function GetTogglUserInfo() {
-    let FM = FileManager.local()
-    let UserInfo = FM.readString(FM.bookmarkedPath("Toggl") + "/UserInfo.json")
+    let FM 
+    let UserInfo
+    try{
+     FM = FileManager.local()
+     UserInfo = FM.readString(FM.bookmarkedPath("Toggl") + "/UserInfo.json")
+   }
+   catch{
+     FM = require('fs')
+     UserInfo=FM.readFileSync("Trello/UserInfo.json",{encoding:'utf8', flag:'r'})
+  }
     return JSON.parse(UserInfo)
 }
