@@ -3,14 +3,16 @@
 // icon-color: purple; icon-glyph: power-off;
 
 // Made by Rodrigo Romero
+//onWindows = 1
+onWindows = 0
 
 const UserInfo = GetTogglUserInfo()
 const TogglToken = UserInfo.Token + ":api_token" 
 let TogglAuth 
-try{
+if(!onWindows){
   TogglAuth = Data.fromString(TogglToken).toBase64String();
 }
-catch
+else
 {
   TogglAuth = Buffer.from(TogglToken).toString('base64')
 }
@@ -19,7 +21,6 @@ const ReportURL = "https://api.track.toggl.com/reports/api/v2/"
 
 const  request = async (method,type,id,headers = {},body=null) =>
 {
-  
   if (id == "") {
       url = TogglURL + type;
   }    
@@ -117,11 +118,11 @@ module.exports.SearchTimeEntries = SearchTimeEntries
 function GetTogglUserInfo() {
     let FM 
     let UserInfo
-    try{
+    if (!onWindows){
      FM = FileManager.local()
      UserInfo = FM.readString(FM.bookmarkedPath("Toggl") + "/UserInfo.json")
    }
-   catch{
+   else{
      FM = require('fs')
      UserInfo=FM.readFileSync("Trello/UserInfo.json",{encoding:'utf8', flag:'r'})
   }
