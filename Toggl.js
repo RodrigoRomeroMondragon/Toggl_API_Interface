@@ -3,8 +3,8 @@
 // icon-color: purple; icon-glyph: power-off;
 
 // Made by Rodrigo Romero
-onWindows = 1
-//onWindows = 0
+//onWindows = 1
+onWindows = 0
 
 const UserInfo = GetTogglUserInfo()
 const TogglToken = UserInfo.Token + ":api_token" 
