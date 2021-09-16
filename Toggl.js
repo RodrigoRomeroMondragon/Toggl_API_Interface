@@ -144,7 +144,7 @@ function GetTogglUserInfo() {
    }
    else{
      FM = require('fs')
-     UserInfo=FM.readFileSync("Trello/UserInfo.json",{encoding:'utf8', flag:'r'})
+     UserInfo=FM.readFileSync("Toggl/UserInfo.json",{encoding:'utf8', flag:'r'})
   }
     return JSON.parse(UserInfo)
 }
