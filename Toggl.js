@@ -152,23 +152,25 @@ function GetTogglUserInfo() {
 function doRequest(options,data) {
   return new Promise ((resolve, reject) => {
     let http = require('https')
-    let req = http.request(options);
+    let response = http.request(options ,res =>{
+    let chunks_of_data = [];
 
-    req.on('data', d => {
-      console.log(d);
-      console.log("-------------------------------------------------------------------------------------------------------------------");
-    process.stdout.write(d)
-  })
+      res.on('data', (fragments) => {
+            chunks_of_data.push(fragments);
+          });
+      res.on('response',res => {
+           resolve(res);
+         });
 
-    req.on('response', res => {
-      console.log(res);
-      resolve(res);
+      res.on('end', () => {
+        let response_body = Buffer.concat(chunks_of_data);
+        resolve(response_body.toString());
+      });
+
+      res.on('error', (error) => {
+        reject(error);
+      });
     });
-
-    req.on('error', err => {
-      reject(err);
-    });
-
-    req.write(""+data)
+    response.write(""+data)
   }); 
 }
