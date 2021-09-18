@@ -153,7 +153,7 @@ function doRequest(options,data) {
   return new Promise ((resolve, reject) => {
     let http = require('https')
     let response = http.request(options ,res =>{
-    let chunks_of_data = [];
+      let chunks_of_data = [];
 
       res.on('data', (fragments) => {
             chunks_of_data.push(fragments);
@@ -164,7 +164,7 @@ function doRequest(options,data) {
 
       res.on('end', () => {
         let response_body = Buffer.concat(chunks_of_data);
-        resolve(response_body.toString());
+        resolve(JSON.parse(response_body.toString()));
       });
 
       res.on('error', (error) => {
