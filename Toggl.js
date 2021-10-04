@@ -3,8 +3,8 @@
 // icon-color: purple; icon-glyph: power-off;
 
 // Made by Rodrigo Romero
-onWindows = 1
-//onWindows = 0
+//onWindows = 1
+onWindows = 0
 
 const UserInfo = GetTogglUserInfo()
 const TogglToken = UserInfo.Token + ":api_token" 
@@ -25,15 +25,14 @@ const  request = async (method,type,id,headers = {},body=null) =>
   let TogglRequest
   let options
   if (id == "") {
-      url = TogglURL + type;
+      url = TogglURL +"/api/v8/"+ type;
   }    
   else {
-      url = "https://" + TogglURL + type + "/" + id;
+      url = "https://" + TogglURL +"/api/v8/"+ type + "/" + id;
   }
   headers["Authorization"] = "Basic "+TogglAuth;
 
   if(!onWindows){
-
     TogglRequest = new Request(url);
     TogglRequest.method = method;
     
