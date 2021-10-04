@@ -16,27 +16,46 @@ else
 {
   TogglAuth = Buffer.from(TogglToken).toString('base64')
 }
-const TogglURL = "https://api.track.toggl.com/api/v8/";
+const TogglURL = "api.track.toggl.com";
 const ReportURL = "https://api.track.toggl.com/reports/api/v2/"
 
 const  request = async (method,type,id,headers = {},body=null) =>
 {
+  let response
+  let TogglRequest
+  let options
   if (id == "") {
-      url = TogglURL + type;
+      url = TogglURL +"/api/v8/"+ type;
   }    
   else {
-      url = TogglURL + type + "/" + id;
+      url = "https://" + TogglURL +"/api/v8/"+ type + "/" + id;
   }
-  let TogglRequest = new Request(url);
-  TogglRequest.method = method;
   headers["Authorization"] = "Basic "+TogglAuth;
-  TogglRequest.headers = headers;
-  if (body != null)
+
+  if(!onWindows){
+    TogglRequest = new Request(url);
+    TogglRequest.method = method;
+    
+    TogglRequest.headers = headers;
+    if (body != null)
+    {
+        TogglRequest.body = JSON.stringify(body);
+    }
+
+    response = await  TogglRequest.loadJSON();
+  }
+  else
   {
-      TogglRequest.body = JSON.stringify(body);
+    options = 
+    {
+      "hostname": TogglURL,
+      "path":"/api/v8/"+ type + "/" + id,
+      "method": method,
+      "headers": headers
+    }
+    response = await doRequest(options,body)
   }
 
-  let  response = await  TogglRequest.loadJSON();
   return response;
 };
 
@@ -124,7 +143,33 @@ function GetTogglUserInfo() {
    }
    else{
      FM = require('fs')
-     UserInfo=FM.readFileSync("Trello/UserInfo.json",{encoding:'utf8', flag:'r'})
+     UserInfo=FM.readFileSync("Toggl/UserInfo.json",{encoding:'utf8', flag:'r'})
   }
     return JSON.parse(UserInfo)
+}
+
+function doRequest(options,data) {
+  return new Promise ((resolve, reject) => {
+    let http = require('https')
+    let response = http.request(options ,res =>{
+      let chunks_of_data = [];
+
+      res.on('data', (fragments) => {
+            chunks_of_data.push(fragments);
+          });
+      res.on('response',res => {
+           resolve(res);
+         });
+
+      res.on('end', () => {
+        let response_body = Buffer.concat(chunks_of_data);
+        resolve(JSON.parse(response_body.toString()));
+      });
+
+      res.on('error', (error) => {
+        reject(error);
+      });
+    });
+    response.write(""+data)
+  }); 
 }
