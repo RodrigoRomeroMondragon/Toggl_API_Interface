@@ -153,7 +153,6 @@ function doRequest(options,data) {
   return new Promise ((resolve, reject) => {
     let http = require('https')
     let response = http.request(options ,res =>{
-      let chunks_of_data = [];
 
       res.on('data', (fragments) => {
             chunks_of_data.push(fragments);
@@ -171,6 +170,10 @@ function doRequest(options,data) {
         reject(error);
       });
     });
-    response.write(""+data)
+    if(data != null){
+      let aux2 = JSON.stringify(data)
+      response.write(JSON.stringify(data))
+    }
+    response.end()
   }); 
 }
