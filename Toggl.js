@@ -164,13 +164,18 @@ function doRequest(options,data) {
 
       res.on('end', () => {
         let response_body = Buffer.concat(chunks_of_data);
-        resolve(response_body.toString());
+        let aux = response_body.toString();
+        resolve(JSON.parse(response_body.toString()));
       });
 
       res.on('error', (error) => {
         reject(error);
       });
     });
-    response.write(""+data)
+    if(data != null){
+      let aux2 = JSON.stringify(data)
+      response.write(JSON.stringify(data))
+    }
+    response.end()
   }); 
 }
