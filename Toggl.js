@@ -153,6 +153,7 @@ function doRequest(options,data) {
   return new Promise ((resolve, reject) => {
     let http = require('https')
     let response = http.request(options ,res =>{
+    let chunks_of_data = [];
 
       res.on('data', (fragments) => {
             chunks_of_data.push(fragments);
