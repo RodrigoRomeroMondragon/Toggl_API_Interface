@@ -71,7 +71,10 @@ const  request = async (method,type,id,headers = {},body=null, report = false) =
 
 async function report(type,query,headers={})
 {
-	let URLParameters = "?" + query + "&workspace_id=" + UserInfo.wid + "&wid=" + UserInfo.wid + "&user_agent=scriptable";
+	let URLParameters = "?" + query + 
+		"&workspace_id=" + UserInfo.wid + 
+		"&wid=" + UserInfo.wid + 
+		"&user_agent=scriptable";
 	let response = await request("GET",type + URLParameters,"" ,headers, null, true) //(method,type,id,headers = {},body=null, report = false) 
 	return response
 }
