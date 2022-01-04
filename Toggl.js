@@ -19,16 +19,26 @@ else
 const TogglURL = "api.track.toggl.com";
 const ReportURL = "https://api.track.toggl.com/reports/api/v2/"
 
-const  request = async (method,type,id,headers = {},body=null) =>
+const  request = async (method,type,id,headers = {},body=null, report = false) =>
 {
   let response
   let TogglRequest
   let options
+  let API_string
+  if (report)
+  {
+  	API_string = "/reports/api/v2/"
+  }
+  else
+  {
+  	API_string = "/api/v8/"	
+  }
+
   if (id == "") {
-      url = TogglURL +"/api/v8/"+ type;
+      url = "https://" + TogglURL + API_string + type;
   }    
   else {
-      url = "https://" + TogglURL +"/api/v8/"+ type + "/" + id;
+      url = "https://" + TogglURL + API_string + type + "/" + id;
   }
   headers["Authorization"] = "Basic "+TogglAuth;
 
@@ -49,7 +59,7 @@ const  request = async (method,type,id,headers = {},body=null) =>
     options = 
     {
       "hostname": TogglURL,
-      "path":"/api/v8/"+ type + "/" + id,
+      "path":API_string+ type + "/" + id,
       "method": method,
       "headers": headers
     }
@@ -61,15 +71,14 @@ const  request = async (method,type,id,headers = {},body=null) =>
 
 async function report(type,query,headers={})
 {
-  url = ReportURL + type + "?" + query + "&workspace_id=" + UserInfo.wid + "&wid=" + UserInfo.wid + "&user_agent=scriptable";
-  let TogglRequest = new Request(url);
-  TogglRequest.method = "GET";
-  headers["Authorization"] = "Basic " + TogglAuth;
-  TogglRequest.headers = headers;
-  
-  let  response = await  TogglRequest.loadJSON();
-  return response
+	let URLParameters = "?" + query + 
+		"&workspace_id=" + UserInfo.wid + 
+		"&wid=" + UserInfo.wid + 
+		"&user_agent=scriptable";
+	let response = await request("GET",type + URLParameters,"" ,headers, null, true) //(method,type,id,headers = {},body=null, report = false) 
+	return response
 }
+
 async function GetTask(id)
 {
   let response = await request("GET", "time_entries", id);
